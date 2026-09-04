@@ -1,0 +1,9 @@
+build/
+build-*/
+results/*.vtk
+__pycache__/
+*.pyc
+.vscode/
+.idea/
+results/*_at_*.csv
+results/slab_history.csv
