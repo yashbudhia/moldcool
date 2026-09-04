@@ -7,5 +7,14 @@
     "explicit_omp_mlups": 208.28,
     "cn_1024_step_ms": 5665.78,
     "cn_1024_cg_iters": 642
+  },
+  "ci": {
+    "N": 1024,
+    "steps": 50,
+    "threads": 4,
+    "explicit_serial_mlups": 205.34,
+    "explicit_omp_mlups": 455.96,
+    "cn_1024_step_ms": 3678.33,
+    "cn_1024_cg_iters": 642
   }
 }
