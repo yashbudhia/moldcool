@@ -27,7 +27,6 @@ public:
         diag_.assign(n, Real(1));
         for (int P = 0; P < n; ++P)
             if (op.mask[P] == Cell::Unknown) diag_[P] = op.mass[P] / dt + theta * op.aP(P);
-        tmp_.assign(n, Real(0));
     }
 
     // y = (M/dt + theta K) x
@@ -83,14 +82,10 @@ public:
         return st;
     }
 
-    const Operator<Real>& op() const { return op_; }
-    const std::vector<Real>& diagonal() const { return diag_; }
-
 private:
     const Operator<Real>& op_;
     Real theta_, dt_;
     std::vector<Real> diag_;
-    mutable std::vector<Real> tmp_;
 };
 
 }  // namespace moldcool

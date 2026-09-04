@@ -32,7 +32,7 @@ class ThetaStepper {
 public:
     ThetaStepper(const Operator<Real>& op, Real theta, Real dt, Real cg_rel_tol = Real(1e-12), int cg_max_iter = 10000)
         : op_(op), theta_(theta), dt_(dt), cg_tol_(cg_rel_tol), cg_max_(cg_max_iter),
-          Kx_(op.grid.n(), Real(0)), rhs_(op.grid.n(), Real(0)), src_(op.grid.n(), Real(0)) {
+          Kx_(op.grid.n(), Real(0)), rhs_(op.grid.n(), Real(0)) {
         if (theta_ > 0) sys_ = std::make_unique<ImplicitSystem<Real>>(op_, theta_, dt_);
     }
 
@@ -98,7 +98,7 @@ private:
     const Operator<Real>& op_;
     Real theta_, dt_, cg_tol_;
     int cg_max_;
-    std::vector<Real> Kx_, rhs_, src_;
+    std::vector<Real> Kx_, rhs_;
     std::unique_ptr<ImplicitSystem<Real>> sys_;
     CGStats cg_;
 };

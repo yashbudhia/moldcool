@@ -33,10 +33,9 @@ struct Operator {
     std::vector<Real> gfix;  // sum of conductances to Fixed faces
     std::vector<Real> bfix;  // sum of conductance * Tfixed over Fixed faces
     std::vector<Real> mass;  // rhocp * V
-    std::vector<Real> Tfixed;
     int n_unknown = 0;
 
-    explicit Operator(const Problem<Real>& p) : grid(p.grid), mask(p.mask), Tfixed(p.Tfixed) {
+    explicit Operator(const Problem<Real>& p) : grid(p.grid), mask(p.mask) {
         const int n = grid.n();
         aE.assign(n, 0); aN.assign(n, 0); aUU.assign(n, 0); gfix.assign(n, 0); bfix.assign(n, 0);
         mass.assign(n, 0);
@@ -75,9 +74,7 @@ struct Operator {
     // y = K x on Unknown cells (y = 0 elsewhere).
     void applyK(const Real* x, Real* y) const {
         const int nx = grid.nx, ny = grid.ny;
-        const int n = nx * ny;
-        (void)n;
-#pragma omp parallel for schedule(static) if (n >= kOmpMinCells)
+#pragma omp parallel for schedule(static) if (nx * ny >= kOmpMinCells)
         for (int j = 0; j < ny; ++j) {
             for (int i = 0; i < nx; ++i) {
                 const int P = j * nx + i;

@@ -2,6 +2,7 @@
 // Prints a single JSON line consumed by bench/check_perf.py.
 #include <chrono>
 #include <cstdio>
+#include <cstdlib>
 #include <vector>
 #ifdef _OPENMP
 #include <omp.h>

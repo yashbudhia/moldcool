@@ -84,12 +84,6 @@ struct Problem {
         Tfixed[p] = T;
         T0[p] = T;
     }
-
-    int count(Cell c) const {
-        int n = 0;
-        for (auto m : mask) n += (m == c);
-        return n;
-    }
 };
 
 // ---------------------------------------------------------------------------------------------

@@ -19,7 +19,7 @@
 using namespace moldcool;
 
 template <class Real>
-struct Result { double max_step_rel = 0, cum_rel = 0, naive_vs_kahan = 0; };
+struct Result { double max_step_rel = 0, cum_rel = 0, naive_vs_kahan = 0, pairwise_vs_kahan = 0; };
 
 template <class Real>
 Result<Real> run(Real theta, int steps, std::FILE* csv, const char* label) {
@@ -54,7 +54,9 @@ Result<Real> run(Real theta, int steps, std::FILE* csv, const char* label) {
     std::vector<Real> terms;
     for (int P = 0; P < op.grid.n(); ++P)
         if (op.mask[P] == Cell::Unknown) terms.push_back(op.mass[P] * T[P]);
-    res.naive_vs_kahan = std::abs(double(naive_sum(terms)) - double(kahan_sum(terms))) / std::abs(double(kahan_sum(terms)));
+    const double kahan = double(kahan_sum(terms));
+    res.naive_vs_kahan = std::abs(double(naive_sum(terms)) - kahan) / std::abs(kahan);
+    res.pairwise_vs_kahan = std::abs(double(pairwise_sum(terms)) - kahan) / std::abs(kahan);
     return res;
 }
 
@@ -83,9 +85,10 @@ int main(int argc, char** argv) {
     auto dE = run<double>(0.0, 400, csv, "double_explicit");
     auto dC = run<double>(0.5, 400, csv, "double_crank_nicolson");
     auto fE = run<float>(0.0f, 400, csv, "float_explicit");
-    std::printf("  double explicit : max per-step rel residual %.3e, cumulative %.3e, naive-vs-Kahan %.3e\n", dE.max_step_rel, dE.cum_rel, dE.naive_vs_kahan);
-    std::printf("  double CN       : max per-step rel residual %.3e, cumulative %.3e, naive-vs-Kahan %.3e\n", dC.max_step_rel, dC.cum_rel, dC.naive_vs_kahan);
-    std::printf("  float explicit  : max per-step rel residual %.3e, cumulative %.3e, naive-vs-Kahan %.3e\n", fE.max_step_rel, fE.cum_rel, fE.naive_vs_kahan);
+    std::printf("  double explicit : max per-step rel residual %.3e, cumulative %.3e, naive-vs-Kahan %.3e, pairwise-vs-Kahan %.3e\n", dE.max_step_rel, dE.cum_rel, dE.naive_vs_kahan, dE.pairwise_vs_kahan);
+    std::printf("  double CN       : max per-step rel residual %.3e, cumulative %.3e, naive-vs-Kahan %.3e, pairwise-vs-Kahan %.3e\n", dC.max_step_rel, dC.cum_rel, dC.naive_vs_kahan, dC.pairwise_vs_kahan);
+    std::printf("  float explicit  : max per-step rel residual %.3e, cumulative %.3e, naive-vs-Kahan %.3e, pairwise-vs-Kahan %.3e\n", fE.max_step_rel, fE.cum_rel, fE.naive_vs_kahan, fE.pairwise_vs_kahan);
+    CHECK(fE.pairwise_vs_kahan < fE.naive_vs_kahan);  // pairwise summation beats naive in float
     if (csv) std::fclose(csv);
     if (!out.empty()) {
         std::FILE* s = std::fopen((out + "energy_summary.csv").c_str(), "w");
