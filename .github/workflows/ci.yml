@@ -1,0 +1,32 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  linux-gcc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y libeigen3-dev ninja-build
+      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DMOLDCOOL_WITH_EIGEN=ON
+      - run: cmake --build build
+      - run: cd build && ctest --output-on-failure
+      - name: performance gate
+        # Hosted runners vary between runs; the gate only catches large regressions here.
+        # Tight gates belong on a dedicated machine (see bench/README section in README.md).
+        run: ./build/moldcool_bench 1024 50 | tee bench_ci.json | python3 bench/check_perf.py --profile ci --min-fraction 0.5
+      - uses: actions/upload-artifact@v4
+        with:
+          name: results
+          path: |
+            results/*.csv
+            bench_ci.json
+
+  windows-msvc:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build --config Release
+      - run: cd build; ctest -C Release --output-on-failure

@@ -1,0 +1,4 @@
+case,max_step_rel_residual,cumulative_rel_residual,naive_vs_kahan
+double_explicit,1.041e-13,3.466e-15,3.055e-16
+double_crank_nicolson,4.832e-11,5.305e-12,3.783e-15
+float_explicit,5.531e-05,1.791e-06,1.686e-07

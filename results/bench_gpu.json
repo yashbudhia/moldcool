@@ -1,0 +1,1 @@
+{"gpu":"NVIDIA GeForce RTX 3060 Laptop GPU","N":2048,"steps":200,"gpu_v1_global_mlups":4040.1,"gpu_v2_shared_mlups":3545.7,"cpu_serial_mlups":138.6,"max_rel_diff_v1":1.33e-15,"max_rel_diff_v2":1.33e-15}
